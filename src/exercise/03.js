@@ -6,43 +6,46 @@ import {useCombobox} from '../use-combobox'
 import {getItems} from '../workerized-filter-cities'
 import {useAsync, useForceRerender} from '../utils'
 
-function Menu({
-  items,
-  getMenuProps,
-  getItemProps,
-  highlightedIndex,
-  selectedItem,
-}) {
-  return (
-    <ul {...getMenuProps()}>
-      {items.map((item, index) => (
-        <ListItem
-          key={item.id}
-          getItemProps={getItemProps}
-          item={item}
-          index={index}
-          selectedItem={selectedItem}
-          highlightedIndex={highlightedIndex}
-        >
-          {item.name}
-        </ListItem>
-      ))}
-    </ul>
-  )
-}
+const Menu = React.memo(
+  ({items, getMenuProps, getItemProps, highlightedIndex, selectedItem}) => {
+    return (
+      <ul {...getMenuProps()}>
+        {items.map((item, index) => (
+          <ListItem
+            key={item.id}
+            getItemProps={getItemProps}
+            item={item}
+            index={index}
+            selectedItem={selectedItem}
+            // highlightedIndex={highlightedIndex}
+            isHighlighted={highlightedIndex === index}
+            isSelected={selectedItem?.id === item.id}
+          >
+            {item.name}
+          </ListItem>
+        ))}
+      </ul>
+    )
+  },
+)
 // 🐨 Memoize the Menu here using React.memo
 
-function ListItem({
-  getItemProps,
-  item,
-  index,
-  selectedItem,
-  highlightedIndex,
-  ...props
-}) {
-  const isSelected = selectedItem?.id === item.id
-  const isHighlighted = highlightedIndex === index
-  return (
+// function areEqual(prevProps, nextProps) {
+//   const isPrevHighlighted = prevProps.highlightedIndex === prevProps.index
+//   const isNextHighlighted = nextProps.highlightedIndex === nextProps.index
+//   return isPrevHighlighted === isNextHighlighted
+// }
+
+const ListItem = React.memo(
+  ({
+    getItemProps,
+    item,
+    index,
+    selectedItem,
+    isSelected,
+    isHighlighted,
+    ...props
+  }) => (
     <li
       {...getItemProps({
         index,
@@ -54,8 +57,8 @@ function ListItem({
         ...props,
       })}
     />
-  )
-}
+  ),
+)
 // 🐨 Memoize the ListItem here using React.memo
 
 function App() {
